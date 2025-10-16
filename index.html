@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>天空之城美食平台</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- 導航欄 -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo">
+                <span class="logo-icon">🏰</span>
+                <span class="logo-text">天空之城</span>
+            </div>
+            <div class="nav-menu" id="navMenu">
+                <a href="#home" class="nav-link">首頁</a>
+                <a href="#gallery" class="nav-link">在班妹妹</a>
+                <a href="#about" class="nav-link">系統優勢</a>
+                <a href="#rules" class="nav-link">注意事項</a>
+                <a href="#contact" class="nav-link">立即報班</a>
+            </div>
+            <div class="hamburger" id="hamburger">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero" id="home">
+        <div class="hero-overlay"></div>
+        <div class="hero-content">
+            <div class="hero-text">
+                <h1 class="hero-title">
+                    <span class="title-main">天空之城美食平台</span>
+                    <span class="title-sub">歡迎報班預約 · 自動化系統</span>
+                </h1>
+                <p class="hero-description">
+                    歡迎體驗極速預約快感 · 智能報班系統
+                </p>
+                <div class="hero-stats">
+                    <div class="stat-item">
+                        <div class="stat-number">16+</div>
+                        <div class="stat-label">在班妹妹</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number">24/7</div>
+                        <div class="stat-label">自動化系統</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number">100%</div>
+                        <div class="stat-label">真實照片</div>
+                    </div>
+                </div>
+                <div class="hero-buttons">
+                    <a href="#gallery" class="btn btn-primary">⚡ 極速查看</a>
+                    <a href="https://line.me/ti/p/RFyAJ0g41h" class="btn btn-secondary" target="_blank">🚀 立即預約</a>
+                </div>
+            </div>
+        </div>
+        <div class="scroll-indicator">
+            <div class="mouse"></div>
+        </div>
+    </section>
+
+    <!-- 最新時刻表 -->
+    <section class="schedule-banner" id="schedule">
+        <div class="container">
+            <div class="schedule-content">
+                <div class="schedule-header">
+                    <span class="live-indicator">🔴 LIVE</span>
+                    <h3 class="schedule-title">最新時刻表</h3>
+                    <span class="update-time" id="updateTime">更新中...</span>
+                </div>
+                <div class="schedule-grid">
+                    <!-- 桃園區 -->
+                    <div class="schedule-column">
+                        <div class="column-header">
+                            <span class="column-icon">🌸</span>
+                            <h4>桃園區</h4>
+                        </div>
+                        <div class="schedule-text" id="scheduleTextTaoyuan">
+                            <div class="loader-small"></div>
+                            <p>載入中...</p>
+                        </div>
+                    </div>
+                    <!-- 中壢區 -->
+                    <div class="schedule-column">
+                        <div class="column-header">
+                            <span class="column-icon">💎</span>
+                            <h4>中壢區</h4>
+                        </div>
+                        <div class="schedule-text" id="scheduleTextZhongli">
+                            <div class="loader-small"></div>
+                            <p>載入中...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 熱門活動資訊 -->
+    <section class="hot-activity" id="activity">
+        <div class="container">
+            <div class="activity-banner">
+                <div class="activity-header" id="activityHeader">
+                    <div class="activity-title-group">
+                        <span class="hot-badge">🔥 HOT</span>
+                        <h2 class="activity-title">熱門活動資訊</h2>
+                    </div>
+                    <button class="activity-toggle" id="activityToggle" aria-label="展開活動資訊">
+                        <span class="toggle-icon">▼</span>
+                        <span class="toggle-text">展開詳情</span>
+                    </button>
+                </div>
+                <div class="activity-content-wrapper collapsed" id="activityContent">
+                    <!-- 載入中提示 -->
+                    <div class="activity-loading">
+                        <div class="loader-small"></div>
+                        <p style="color: rgba(255, 255, 255, 0.7); margin-top: 10px;">載入活動資訊中...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 圖片展示區 -->
+    <section class="gallery-section" id="gallery">
+        <div class="container">
+            <h2 class="section-title">在班妹妹展示</h2>
+            <p class="section-subtitle">所有照片100%真實 · 本人服務 · 自動化報班系統</p>
+            
+            <!-- 分類標籤 -->
+            <div class="tabs">
+                <button class="tab-btn active" data-category="all">
+                    <span>全部</span>
+                    <span class="tab-count">16</span>
+                </button>
+                <button class="tab-btn" data-category="桃園">
+                    <span>桃園區</span>
+                    <span class="tab-count">7</span>
+                </button>
+                <button class="tab-btn" data-category="中壢">
+                    <span>中壢區</span>
+                    <span class="tab-count">9</span>
+                </button>
+                <a href="https://www.sex100.co/908154/6/4/28/1/" class="tab-btn tab-link" target="_blank">
+                    <span>越南妹</span>
+                </a>
+                <a href="https://www.sex100.co/908154/7/4/28/1/" class="tab-btn tab-link" target="_blank">
+                    <span>俄羅斯</span>
+                </a>
+                <a href="https://www.sex100.co/908154/1/4/28/1/" class="tab-btn tab-link" target="_blank">
+                    <span>台灣妹</span>
+                </a>
+            </div>
+
+            <!-- 圖片網格 - 將從資料庫動態載入 -->
+            <div class="gallery" id="galleryContainer">
+                <!-- 載入中提示 -->
+                <div class="loading-message">
+                    <div class="loader"></div>
+                    <p class="loading-text">🚀 正在從雲端載入資料...</p>
+                    <p class="loading-tip">✨ 首次載入約需 3-4 秒，請稍候</p>
+                    <p class="loading-tip" style="margin-top: 10px; opacity: 0.7;">💡 載入完成後會自動快取 30 分鐘，再次打開秒速顯示</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 關於我們 -->
+    <section class="about" id="about">
+        <div class="container">
+            <h2 class="section-title">為什麼選擇天空之城</h2>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">⚡</div>
+                    <h3>極速預約</h3>
+                    <p>自動化報班系統，秒速確認預約</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">✅</div>
+                    <h3>100% 真實</h3>
+                    <p>所有照片真實無修圖，本人親自服務</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🔄</div>
+                    <h3>即時更新</h3>
+                    <p>在班資訊實時同步，絕不撲空</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🔒</div>
+                    <h3>隱私保護</h3>
+                    <p>嚴格保護客戶隱私，絕對保密</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">💎</div>
+                    <h3>高效管理</h3>
+                    <p>智能化系統管理，提升服務效率</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 注意事項與規範 -->
+    <section class="rules-section" id="rules">
+        <div class="container">
+            <div class="rules-banner">
+                <div class="rules-header" id="rulesHeader">
+                    <div class="rules-title-group">
+                        <span class="rules-badge">📋</span>
+                        <h2 class="rules-title">注意事項與規範</h2>
+                    </div>
+                    <button class="rules-toggle" id="rulesToggle" aria-label="展開注意事項">
+                        <span class="toggle-icon">▼</span>
+                        <span class="toggle-text">展開詳情</span>
+                    </button>
+                </div>
+                <div class="rules-content-wrapper collapsed" id="rulesContent">
+                    <!-- 載入中提示 -->
+                    <div class="rules-loading">
+                        <div class="loader-small"></div>
+                        <p style="color: rgba(255, 255, 255, 0.7); margin-top: 10px;">載入注意事項中...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 聯絡我們 -->
+    <section class="contact" id="contact">
+        <div class="container">
+            <h2 class="section-title">極速報班預約</h2>
+            <p class="section-subtitle">體驗自動化預約快感 · 選擇妹妹立即報班</p>
+            <div class="contact-methods">
+                <a href="https://line.me/ti/p/hvGMoLjLTy" class="contact-btn line-btn" target="_blank">
+                    <span class="contact-icon">⚡</span>
+                    <span>天空客服1線</span>
+                </a>
+                <a href="https://line.me/ti/p/RFyAJ0g41h" class="contact-btn line-btn" target="_blank">
+                    <span class="contact-icon">⚡</span>
+                    <span>天空客服2線</span>
+                </a>
+                <a href="https://lin.ee/tMPT8D8" class="contact-btn schedule-btn" target="_blank">
+                    <span class="contact-icon">🏰</span>
+                    <span>天空之城官方隱身</span>
+                </a>
+            </div>
+            <div class="contact-features">
+                <div class="contact-feature">
+                    <span class="feature-check">✓</span> 自動化系統
+                </div>
+                <div class="contact-feature">
+                    <span class="feature-check">✓</span> 即時確認
+                </div>
+                <div class="contact-feature">
+                    <span class="feature-check">✓</span> 快速到位
+                </div>
+            </div>
+        </div>
+    </section>
+
+        <!-- 燈箱效果 -->
+        <div class="lightbox" id="lightbox">
+            <span class="close-btn">&times;</span>
+            <img class="lightbox-img" id="lightbox-img" src="" alt="">
+            <button class="nav-btn prev-btn" id="prev-btn">&#10094;</button>
+            <button class="nav-btn next-btn" id="next-btn">&#10095;</button>
+        </div>
+
+    <!-- 地址&停車場浮框 -->
+    <div class="address-modal" id="addressModal">
+        <div class="address-modal-overlay" id="addressModalOverlay"></div>
+        <div class="address-modal-content">
+            <button class="address-modal-close" id="addressModalClose">&times;</button>
+            <h3 class="address-modal-title" id="addressModalTitle">🚘 地址 & 停車場資訊</h3>
+            <div class="address-modal-body">
+                <!-- 圖片區域 -->
+                <div class="address-image-section">
+                    <img id="addressImage" src="" alt="地址圖片" class="address-image">
+                    <button class="address-copy-btn" id="copyImageBtn" title="複製圖片連結">
+                        <span class="copy-icon">📋</span> 複製圖片
+                    </button>
+                </div>
+                <!-- 內容區域 -->
+                <div class="address-content-section">
+                    <div id="addressContent" class="address-content"></div>
+                    <button class="address-copy-btn" id="copyContentBtn" title="複製內容">
+                        <span class="copy-icon">📋</span> 複製內容
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- 頁腳 -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-logo">
+                    <span class="logo-icon">🏰</span>
+                    <span class="logo-text">天空之城</span>
+                </div>
+                <p class="footer-text">美食平台 · 自動化報班系統</p>
+                <p class="footer-slogan">歡迎體驗極速預約快感</p>
+                <p class="footer-copyright">
+                    &copy; 2025 
+                    <a href="https://lin.ee/tMPT8D8" target="_blank" class="footer-link">天空之城 官方隱身</a> 
+                    All rights reserved.
+                </p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- 回到頂部按鈕 -->
+    <button class="scroll-to-top" id="scrollToTop">
+        <span>↑</span>
+    </button>
+
+    <script src="config.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
+
