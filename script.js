@@ -882,7 +882,7 @@ function renderGallery() {
                     ${infoText}
                 </div>
                 <div class="girl-actions">
-                    <a href="https://line.me/ti/p/RFyAJ0g41h" class="book-btn" target="_blank" onclick="event.stopPropagation();" style="width: 100%;">⚡ 立即預約</a>
+                    <a href="https://line.me/ti/p/hvGMoLjLTy" class="book-btn" target="_blank" onclick="event.stopPropagation();" style="width: 100%;">⚡ 立即預約</a>
                 </div>
             </div>
         `;
