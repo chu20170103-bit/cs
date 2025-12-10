@@ -1742,6 +1742,22 @@ body {
     box-shadow: 0 5px 20px rgba(139, 92, 246, 0.6);
 }
 
+.line-book-btn {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.line-book-btn:hover {
+    box-shadow: 0 5px 20px rgba(102, 126, 234, 0.6);
+}
+
+.telegram-book-btn {
+    background: linear-gradient(135deg, #0088cc 0%, #005fa3 100%);
+}
+
+.telegram-book-btn:hover {
+    box-shadow: 0 5px 20px rgba(0, 136, 204, 0.6);
+}
+
 .gallery-item.hidden {
     display: none;
 }
@@ -2262,7 +2278,7 @@ body {
 
 .contact-methods {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
     gap: 20px;
     max-width: 1200px;
     margin: 50px auto 0;
@@ -2394,6 +2410,30 @@ body {
 .service-btn:hover {
     transform: translateY(-5px) scale(1.05);
     box-shadow: 0 15px 40px rgba(59, 130, 246, 0.6);
+}
+
+.telegram-btn {
+    background: linear-gradient(135deg, #0088cc 0%, #005fa3 100%);
+    color: white;
+    border: 2px solid rgba(0, 136, 204, 0.3);
+}
+
+.telegram-btn:hover {
+    transform: translateY(-5px) scale(1.05);
+    box-shadow: 0 15px 40px rgba(0, 136, 204, 0.6);
+    border-color: rgba(0, 136, 204, 0.5);
+}
+
+.telegram-channel-btn {
+    background: linear-gradient(135deg, #229ED9 0%, #0066cc 100%);
+    color: white;
+    border: 2px solid rgba(34, 158, 217, 0.3);
+}
+
+.telegram-channel-btn:hover {
+    transform: translateY(-5px) scale(1.05);
+    box-shadow: 0 15px 40px rgba(34, 158, 217, 0.6);
+    border-color: rgba(34, 158, 217, 0.5);
 }
 
 .contact-icon {

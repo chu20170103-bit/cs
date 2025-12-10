@@ -882,7 +882,8 @@ function renderGallery() {
                     ${infoText}
                 </div>
                 <div class="girl-actions">
-                    <a href="https://line.me/ti/p/hvGMoLjLTy" class="book-btn" target="_blank" onclick="event.stopPropagation();" style="width: 100%;">⚡ 立即預約</a>
+                    <a href="https://line.me/ti/p/hvGMoLjLTy" class="book-btn line-book-btn" target="_blank" onclick="event.stopPropagation();">⚡ LINE預約</a>
+                    <a href="https://t.me/sexy69bj" class="book-btn telegram-book-btn" target="_blank" onclick="event.stopPropagation();">✈️ 飛機預約</a>
                 </div>
             </div>
         `;
@@ -907,7 +908,7 @@ function renderGallery() {
             });
         }
         
-        // 注意：照影下載按鈕已移除，改為單一"立即預約"按鈕
+        // 注意：照影下載按鈕已移除，改為 LINE預約 和 飛機預約 兩個按鈕
         
         // 添加照片/影片切換功能
         if (girl.video) {
