@@ -404,8 +404,12 @@ async function loadSchedule() {
         const data = getRefreshCount();
         const remainingSeconds = Math.ceil((data.blockUntil - now) / 1000);
         console.warn(`⛔ 系統偵測到異常行為，已暫時封鎖。剩餘 ${remainingSeconds} 秒`);
-        scheduleTextTaoyuan.innerHTML = `<p style="color: #ef4444;">🚫 訪問已被限制</p><p style="font-size: 0.85rem;">${remainingSeconds} 秒後解除</p>`;
-        scheduleTextZhongli.innerHTML = `<p style="color: #ef4444;">🚫 訪問已被限制</p><p style="font-size: 0.85rem;">${remainingSeconds} 秒後解除</p>`;
+        if (scheduleTextTaoyuan) {
+            scheduleTextTaoyuan.innerHTML = `<p style="color: #ef4444;">🚫 訪問已被限制</p><p style="font-size: 0.85rem;">${remainingSeconds} 秒後解除</p>`;
+        }
+        if (scheduleTextZhongli) {
+            scheduleTextZhongli.innerHTML = `<p style="color: #ef4444;">🚫 訪問已被限制</p><p style="font-size: 0.85rem;">${remainingSeconds} 秒後解除</p>`;
+        }
         return;
     }
     
@@ -422,8 +426,12 @@ async function loadSchedule() {
         setRefreshCount(newCount, data.lastTime, data.blockUntil);
         
         // 顯示等待訊息
-        scheduleTextTaoyuan.innerHTML = '<p>⏳ 請稍候 ' + remainingTime + ' 秒...</p>';
-        scheduleTextZhongli.innerHTML = '<p>⏳ 請稍候 ' + remainingTime + ' 秒...</p>';
+        if (scheduleTextTaoyuan) {
+            scheduleTextTaoyuan.innerHTML = '<p>⏳ 請稍候 ' + remainingTime + ' 秒...</p>';
+        }
+        if (scheduleTextZhongli) {
+            scheduleTextZhongli.innerHTML = '<p>⏳ 請稍候 ' + remainingTime + ' 秒...</p>';
+        }
         
         // 第 5 次警告時顯示友善提示
         if (newCount === 5) {
@@ -437,8 +445,12 @@ async function loadSchedule() {
             console.error('🚫 偵測到異常刷新行為，已暫時封鎖 2 分鐘');
             
             // 顯示封鎖訊息
-            scheduleTextTaoyuan.innerHTML = '<p style="color: #ef4444;">🚫 訪問已被限制</p><p style="font-size: 0.85rem;">2 分鐘後自動解除</p>';
-            scheduleTextZhongli.innerHTML = '<p style="color: #ef4444;">🚫 訪問已被限制</p><p style="font-size: 0.85rem;">2 分鐘後自動解除</p>';
+            if (scheduleTextTaoyuan) {
+                scheduleTextTaoyuan.innerHTML = '<p style="color: #ef4444;">🚫 訪問已被限制</p><p style="font-size: 0.85rem;">2 分鐘後自動解除</p>';
+            }
+            if (scheduleTextZhongli) {
+                scheduleTextZhongli.innerHTML = '<p style="color: #ef4444;">🚫 訪問已被限制</p><p style="font-size: 0.85rem;">2 分鐘後自動解除</p>';
+            }
             
             // 彈窗警告
             alert('🚫 系統安全警告\n\n' +
@@ -538,8 +550,13 @@ async function loadSchedule() {
         }
     } catch (error) {
         console.error('載入時刻表失敗:', error);
-        scheduleTextTaoyuan.innerHTML = '<p style="color: #f59e0b;">⚠️ 載入失敗</p><p style="font-size: 0.85rem;">請稍後重試</p>';
-        scheduleTextZhongli.innerHTML = '<p style="color: #f59e0b;">⚠️ 載入失敗</p><p style="font-size: 0.85rem;">請稍後重試</p>';
+        if (scheduleTextTaoyuan) {
+            scheduleTextTaoyuan.innerHTML = '<p style="color: #f59e0b;">⚠️ 載入失敗</p><p style="font-size: 0.85rem;">請稍後重試</p>';
+        }
+        if (scheduleTextZhongli) {
+            scheduleTextZhongli.innerHTML = '<p style="color: #f59e0b;">⚠️ 載入失敗</p><p style="font-size: 0.85rem;">請稍後重試</p>';
+        }
+        throw error; // 重新拋出錯誤以便調用者處理
     }
 }
 
@@ -862,7 +879,15 @@ function renderGallery() {
                     </div>
                 ` : ''}
                 <div class="girl-image ${videoUrl ? 'active' : ''}">
-                    <img src="${imageUrl}" alt="${girl.name}" loading="lazy" onerror="this.onerror=null; this.src='https://via.placeholder.com/400x600/764ba2/ffffff?text=${encodeURIComponent(girl.name)}'">
+                    <img 
+                        src="${imageUrl}" 
+                        alt="${girl.name}" 
+                        loading="lazy" 
+                        decoding="async"
+                        width="400"
+                        height="600"
+                        onerror="this.onerror=null; this.src='https://via.placeholder.com/400x600/764ba2/ffffff?text=${encodeURIComponent(girl.name)}'"
+                    >
                 </div>
                 ${videoUrl ? `
                     <div class="girl-video">
@@ -1599,39 +1624,197 @@ function initAddressModal() {
     }
 }
 
+// ========== 性能監控 ==========
+function logPerformance(name, startTime) {
+    if (performance && performance.now) {
+        const duration = performance.now() - startTime;
+        console.log(`⏱️ ${name} 耗時: ${duration.toFixed(2)}ms`);
+        
+        // 記錄到性能 API（如果支持）
+        if (performance.mark && performance.measure) {
+            performance.mark(`${name}-end`);
+            performance.measure(name, `${name}-start`, `${name}-end`);
+        }
+    }
+}
+
+// 標記性能起始點
+function markPerformance(name) {
+    if (performance && performance.mark) {
+        performance.mark(`${name}-start`);
+    }
+}
+
+// ========== Web Vitals 監控 ==========
+function initWebVitals() {
+    // 監控 Largest Contentful Paint (LCP)
+    if ('PerformanceObserver' in window) {
+        try {
+            const observer = new PerformanceObserver((list) => {
+                const entries = list.getEntries();
+                const lastEntry = entries[entries.length - 1];
+                console.log('📊 LCP:', lastEntry.renderTime || lastEntry.loadTime, 'ms');
+            });
+            observer.observe({ entryTypes: ['largest-contentful-paint'] });
+        } catch (e) {
+            console.warn('LCP monitoring not supported');
+        }
+        
+        // 監控 First Input Delay (FID)
+        try {
+            const observer = new PerformanceObserver((list) => {
+                const entries = list.getEntries();
+                entries.forEach((entry) => {
+                    console.log('📊 FID:', entry.processingStart - entry.startTime, 'ms');
+                });
+            });
+            observer.observe({ entryTypes: ['first-input'] });
+        } catch (e) {
+            console.warn('FID monitoring not supported');
+        }
+    }
+}
+
+// ========== 圖片載入優化 ==========
+function optimizeImageLoading() {
+    // 使用 Intersection Observer 實現真正的懶加載
+    if ('IntersectionObserver' in window) {
+        const imageObserver = new IntersectionObserver((entries, observer) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const img = entry.target;
+                    
+                    // 處理 data-src 的圖片
+                    if (img.dataset.src) {
+                        img.src = img.dataset.src;
+                        img.removeAttribute('data-src');
+                        observer.unobserve(img);
+                    }
+                    
+                    // 標記圖片已載入（用於 CSS 動畫）
+                    img.addEventListener('load', () => {
+                        img.setAttribute('data-loaded', 'true');
+                    }, { once: true });
+                    
+                    // 處理載入失敗
+                    img.addEventListener('error', () => {
+                        console.warn('圖片載入失敗:', img.src);
+                        img.setAttribute('data-loaded', 'true'); // 仍然標記為已處理
+                    }, { once: true });
+                }
+            });
+        }, {
+            rootMargin: '50px' // 提前50px開始載入
+        });
+        
+        // 觀察所有帶 data-src 的圖片
+        document.querySelectorAll('img[data-src]').forEach(img => {
+            imageObserver.observe(img);
+        });
+        
+        // 觀察所有 lazy loading 的圖片
+        document.querySelectorAll('img[loading="lazy"]').forEach(img => {
+            img.addEventListener('load', () => {
+                img.setAttribute('data-loaded', 'true');
+            }, { once: true });
+            
+            img.addEventListener('error', () => {
+                img.setAttribute('data-loaded', 'true');
+            }, { once: true });
+        });
+    }
+}
+
+// ========== Service Worker 註冊 ==========
+function registerServiceWorker() {
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+            // 使用相對路徑，適應不同部署環境
+            const swPath = './service-worker.js';
+            navigator.serviceWorker.register(swPath)
+                .then(registration => {
+                    console.log('✅ Service Worker 註冊成功:', registration.scope);
+                    
+                    // 檢查是否有更新
+                    registration.addEventListener('updatefound', () => {
+                        const newWorker = registration.installing;
+                        newWorker.addEventListener('statechange', () => {
+                            if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                                console.log('🔄 發現 Service Worker 更新，請重新載入頁面');
+                            }
+                        });
+                    });
+                })
+                .catch(error => {
+                    console.log('⚠️ Service Worker 註冊失敗:', error);
+                });
+        });
+    }
+}
+
 // ========== 頁面載入 ==========
 // 使用 DOMContentLoaded 而非 load，加快首次載入速度
 document.addEventListener('DOMContentLoaded', () => {
+    const pageLoadStart = performance.now();
+    markPerformance('頁面初始化');
     console.log('📱 開始載入資料...');
     
-    // 初始化活動收合功能
-    initActivityToggle();
-    
-    // 初始化注意事項收合功能
-    initRulesToggle();
-    
-    // 初始化妹妹名字跳转功能
-    initGirlNameLinks();
-    
-    // 初始化地址浮框功能
-    initAddressModal();
-    
-    // 立即載入時刻表（優先顯示）
-    loadSchedule();
-    
-    // 使用 setTimeout 讓時刻表先顯示，再載入妹妹資料
-    setTimeout(() => {
-        loadGirlsData();
-    }, 100);
-    
-    // 設定時刻表自動刷新（1 分鐘）
-    setInterval(() => {
-        console.log('🔄 自動刷新時刻表...');
-        loadSchedule();
-    }, SCHEDULE_REFRESH_INTERVAL);
-    
-    console.log(`⏰ 已設定自動刷新：時刻表每 ${SCHEDULE_REFRESH_INTERVAL / 1000} 秒更新一次`);
-    console.log(`💡 妹妹資料僅在頁面載入時更新（需要最新資料請重新整理頁面）`);
+    try {
+        // 初始化 Web Vitals 監控
+        initWebVitals();
+        
+        // 註冊 Service Worker（PWA支持）
+        registerServiceWorker();
+        
+        // 初始化活動收合功能
+        initActivityToggle();
+        
+        // 初始化注意事項收合功能
+        initRulesToggle();
+        
+        // 初始化妹妹名字跳转功能
+        initGirlNameLinks();
+        
+        // 初始化地址浮框功能
+        initAddressModal();
+        
+        // 優化圖片載入
+        optimizeImageLoading();
+        
+        // 立即載入時刻表（優先顯示）
+        const scheduleStart = performance.now();
+        markPerformance('時刻表載入');
+        loadSchedule().then(() => {
+            logPerformance('時刻表載入', scheduleStart);
+        }).catch(err => {
+            console.error('載入時刻表失敗:', err);
+        });
+        
+        // 使用 setTimeout 讓時刻表先顯示，再載入妹妹資料
+        setTimeout(() => {
+            const girlsStart = performance.now();
+            markPerformance('妹妹資料載入');
+            loadGirlsData().then(() => {
+                logPerformance('妹妹資料載入', girlsStart);
+            }).catch(err => {
+                console.error('載入妹妹資料失敗:', err);
+            });
+        }, 100);
+        
+        // 設定時刻表自動刷新（1 分鐘）
+        setInterval(() => {
+            console.log('🔄 自動刷新時刻表...');
+            loadSchedule().catch(err => {
+                console.error('自動刷新時刻表失敗:', err);
+            });
+        }, SCHEDULE_REFRESH_INTERVAL);
+        
+        logPerformance('頁面初始化', pageLoadStart);
+        console.log(`⏰ 已設定自動刷新：時刻表每 ${SCHEDULE_REFRESH_INTERVAL / 1000} 秒更新一次`);
+        console.log(`💡 妹妹資料僅在頁面載入時更新（需要最新資料請重新整理頁面）`);
+    } catch (error) {
+        console.error('頁面初始化錯誤:', error);
+    }
 });
 
 // ========== 滾動顯示動畫 ==========

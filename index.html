@@ -2,11 +2,83 @@
 <html lang="zh-TW">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>天空之城美食平台</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+    <title>天空之城美食平台 - 自動化報班系統 | 16+在班妹妹 | 24/7服務</title>
+    
+    <!-- SEO Meta Tags -->
+    <meta name="description" content="天空之城美食平台，提供自動化報班系統，16+在班妹妹，24/7自動化服務，100%真實照片，極速預約體驗">
+    <meta name="keywords" content="天空之城,桃園,中壢,預約系統,自動化報班,在班妹妹,美食平台">
+    <meta name="author" content="天空之城">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://padolady.pages.dev/">
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="天空之城美食平台 - 自動化報班系統">
+    <meta property="og:description" content="歡迎體驗極速預約快感 · 智能報班系統 · 16+在班妹妹">
+    <meta property="og:locale" content="zh_TW">
+    
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="天空之城美食平台">
+    <meta name="twitter:description" content="歡迎體驗極速預約快感 · 智能報班系統">
+    
+    <!-- Performance Optimization -->
+    <link rel="preconnect" href="https://docs.google.com" crossorigin>
+    <link rel="dns-prefetch" href="https://docs.google.com">
+    <link rel="preconnect" href="https://drive.google.com" crossorigin>
+    <link rel="dns-prefetch" href="https://drive.google.com">
+    
+    <!-- Theme Color -->
+    <meta name="theme-color" content="#8b5cf6">
+    <meta name="msapplication-TileColor" content="#8b5cf6">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="天空之城">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏰</text></svg>">
+    
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="./manifest.json">
+    
+    <!-- Stylesheet -->
     <link rel="stylesheet" href="style.css">
+    
+    <!-- Preload 關鍵資源 -->
+    <link rel="preload" href="style.css" as="style">
+    <link rel="preload" href="config.js" as="script">
+    
+    <!-- Structured Data (Schema.org) -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "Organization",
+        "name": "天空之城",
+        "description": "天空之城美食平台，提供自動化報班系統，24/7服務",
+        "url": "https://padolady.pages.dev/",
+        "logo": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏰</text></svg>",
+        "contactPoint": {
+            "@type": "ContactPoint",
+            "contactType": "Customer Service",
+            "availableLanguage": ["Chinese", "zh-TW"]
+        },
+        "areaServed": [
+            {
+                "@type": "City",
+                "name": "桃園"
+            },
+            {
+                "@type": "City",
+                "name": "中壢"
+            }
+        ]
+    }
+    </script>
 </head>
 <body>
+    <!-- Skip to Content (Accessibility) -->
+    <a href="#main-content" class="skip-to-content" aria-label="跳至主要內容">跳至主要內容</a>
     <!-- 導航欄 -->
     <nav class="navbar">
         <div class="nav-container">
@@ -21,16 +93,18 @@
                 <a href="#rules" class="nav-link">注意事項</a>
                 <a href="#contact" class="nav-link">立即報班</a>
             </div>
-            <div class="hamburger" id="hamburger">
-                <span></span>
-                <span></span>
-                <span></span>
-            </div>
+            <button class="hamburger" id="hamburger" aria-label="開啟導航選單" aria-expanded="false">
+                <span aria-hidden="true"></span>
+                <span aria-hidden="true"></span>
+                <span aria-hidden="true"></span>
+            </button>
         </div>
     </nav>
 
+    <!-- Main Content -->
+    <main id="main-content">
     <!-- Hero Section -->
-    <section class="hero" id="home">
+    <section class="hero" id="home" aria-label="首頁橫幅">
         <div class="hero-overlay"></div>
         <div class="hero-content">
             <div class="hero-text">
@@ -56,8 +130,8 @@
                     </div>
                 </div>
                 <div class="hero-buttons">
-                    <a href="#gallery" class="btn btn-primary">⚡ 極速查看</a>
-                    <a href="https://line.me/ti/p/hvGMoLjLTy" class="btn btn-secondary" target="_blank">🚀 立即預約</a>
+                    <a href="#gallery" class="btn btn-primary" aria-label="查看在班妹妹">⚡ 極速查看</a>
+                    <a href="https://line.me/ti/p/hvGMoLjLTy" class="btn btn-secondary" target="_blank" rel="noopener noreferrer" aria-label="透過LINE立即預約">🚀 立即預約</a>
                 </div>
             </div>
         </div>
@@ -67,7 +141,7 @@
     </section>
 
     <!-- 最新時刻表 -->
-    <section class="schedule-banner" id="schedule">
+    <section class="schedule-banner" id="schedule" aria-label="最新時刻表">
         <div class="container">
             <div class="schedule-content">
                 <div class="schedule-header">
@@ -104,7 +178,7 @@
     </section>
 
     <!-- 熱門活動資訊 -->
-    <section class="hot-activity" id="activity">
+    <section class="hot-activity" id="activity" aria-label="熱門活動資訊">
         <div class="container">
             <div class="activity-banner">
                 <div class="activity-header" id="activityHeader">
@@ -129,7 +203,7 @@
     </section>
 
     <!-- 圖片展示區 -->
-    <section class="gallery-section" id="gallery">
+    <section class="gallery-section" id="gallery" aria-label="在班妹妹展示">
         <div class="container">
             <h2 class="section-title">在班妹妹展示</h2>
             <p class="section-subtitle">所有照片100%真實 · 本人服務 · 自動化報班系統</p>
@@ -148,13 +222,13 @@
                     <span>中壢區</span>
                     <span class="tab-count">9</span>
                 </button>
-                <a href="https://www.sex100.co/908154/6/4/28/1/" class="tab-btn tab-link" target="_blank">
+                <a href="https://www.sex100.co/908154/6/4/28/1/" class="tab-btn tab-link" target="_blank" rel="noopener noreferrer" aria-label="查看越南妹">
                     <span>越南妹</span>
                 </a>
-                <a href="https://www.sex100.co/908154/7/4/28/1/" class="tab-btn tab-link" target="_blank">
+                <a href="https://www.sex100.co/908154/7/4/28/1/" class="tab-btn tab-link" target="_blank" rel="noopener noreferrer" aria-label="查看俄羅斯">
                     <span>俄羅斯</span>
                 </a>
-                <a href="https://www.sex100.co/908154/1/4/28/1/" class="tab-btn tab-link" target="_blank">
+                <a href="https://www.sex100.co/908154/1/4/28/1/" class="tab-btn tab-link" target="_blank" rel="noopener noreferrer" aria-label="查看台灣妹">
                     <span>台灣妹</span>
                 </a>
             </div>
@@ -173,7 +247,7 @@
     </section>
 
     <!-- 關於我們 -->
-    <section class="about" id="about">
+    <section class="about" id="about" aria-label="系統優勢">
         <div class="container">
             <h2 class="section-title">為什麼選擇天空之城</h2>
             <div class="features-grid">
@@ -207,7 +281,7 @@
     </section>
 
     <!-- 注意事項與規範 -->
-    <section class="rules-section" id="rules">
+    <section class="rules-section" id="rules" aria-label="注意事項與規範">
         <div class="container">
             <div class="rules-banner">
                 <div class="rules-header" id="rulesHeader">
@@ -232,29 +306,29 @@
     </section>
 
     <!-- 聯絡我們 -->
-    <section class="contact" id="contact">
+    <section class="contact" id="contact" aria-label="立即報班預約">
         <div class="container">
             <h2 class="section-title">極速報班預約</h2>
             <p class="section-subtitle">體驗自動化預約快感 · 選擇妹妹立即報班</p>
             <div class="contact-methods">
-                <a href="https://line.me/ti/p/hvGMoLjLTy" class="contact-btn line-btn" target="_blank">
-                    <span class="contact-icon">⚡</span>
+                <a href="https://line.me/ti/p/hvGMoLjLTy" class="contact-btn line-btn" target="_blank" rel="noopener noreferrer" aria-label="聯絡天空客服1線">
+                    <span class="contact-icon" aria-hidden="true">⚡</span>
                     <span>天空客服1線</span>
                 </a>
-                <a href="https://line.me/ti/p/hvGMoLjLTy" class="contact-btn line-btn" target="_blank">
-                    <span class="contact-icon">⚡</span>
+                <a href="https://line.me/ti/p/hvGMoLjLTy" class="contact-btn line-btn" target="_blank" rel="noopener noreferrer" aria-label="聯絡天空客服2線">
+                    <span class="contact-icon" aria-hidden="true">⚡</span>
                     <span>天空客服2線</span>
                 </a>
-                <a href="https://lin.ee/tMPT8D8" class="contact-btn schedule-btn" target="_blank">
-                    <span class="contact-icon">🏰</span>
+                <a href="https://lin.ee/tMPT8D8" class="contact-btn schedule-btn" target="_blank" rel="noopener noreferrer" aria-label="加入天空之城官方隱身">
+                    <span class="contact-icon" aria-hidden="true">🏰</span>
                     <span>天空之城官方隱身</span>
                 </a>
-                <a href="https://t.me/sexy69bj" class="contact-btn telegram-btn" target="_blank">
-                    <span class="contact-icon">✈️</span>
+                <a href="https://t.me/sexy69bj" class="contact-btn telegram-btn" target="_blank" rel="noopener noreferrer" aria-label="聯絡Telegram客服">
+                    <span class="contact-icon" aria-hidden="true">✈️</span>
                     <span>Telegram 客服</span>
                 </a>
-                <a href="https://t.me/+z5jbaOTDZrMzYTFl" class="contact-btn telegram-channel-btn" target="_blank">
-                    <span class="contact-icon">📢</span>
+                <a href="https://t.me/+z5jbaOTDZrMzYTFl" class="contact-btn telegram-channel-btn" target="_blank" rel="noopener noreferrer" aria-label="加入Telegram頻道">
+                    <span class="contact-icon" aria-hidden="true">📢</span>
                     <span>Telegram 頻道</span>
                 </a>
             </div>
@@ -273,32 +347,32 @@
     </section>
 
         <!-- 燈箱效果 -->
-        <div class="lightbox" id="lightbox">
-            <span class="close-btn">&times;</span>
-            <img class="lightbox-img" id="lightbox-img" src="" alt="">
-            <button class="nav-btn prev-btn" id="prev-btn">&#10094;</button>
-            <button class="nav-btn next-btn" id="next-btn">&#10095;</button>
+        <div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="圖片燈箱">
+            <button class="close-btn" aria-label="關閉燈箱">&times;</button>
+            <img class="lightbox-img" id="lightbox-img" src="" alt="放大圖片">
+            <button class="nav-btn prev-btn" id="prev-btn" aria-label="上一張圖片">&#10094;</button>
+            <button class="nav-btn next-btn" id="next-btn" aria-label="下一張圖片">&#10095;</button>
         </div>
 
     <!-- 地址&停車場浮框 -->
-    <div class="address-modal" id="addressModal">
-        <div class="address-modal-overlay" id="addressModalOverlay"></div>
+    <div class="address-modal" id="addressModal" role="dialog" aria-modal="true" aria-labelledby="addressModalTitle">
+        <div class="address-modal-overlay" id="addressModalOverlay" aria-label="關閉浮框"></div>
         <div class="address-modal-content">
-            <button class="address-modal-close" id="addressModalClose">&times;</button>
+            <button class="address-modal-close" id="addressModalClose" aria-label="關閉地址資訊浮框">&times;</button>
             <h3 class="address-modal-title" id="addressModalTitle">🚘 地址 & 停車場資訊</h3>
             <div class="address-modal-body">
                 <!-- 圖片區域 -->
                 <div class="address-image-section">
-                    <img id="addressImage" src="" alt="地址圖片" class="address-image">
-                    <button class="address-copy-btn" id="copyImageBtn" title="複製圖片連結">
-                        <span class="copy-icon">📋</span> 複製圖片
+                    <img id="addressImage" src="" alt="地址與停車場資訊圖片" class="address-image">
+                    <button class="address-copy-btn" id="copyImageBtn" title="複製圖片連結" aria-label="複製圖片到剪貼簿">
+                        <span class="copy-icon" aria-hidden="true">📋</span> 複製圖片
                     </button>
                 </div>
                 <!-- 內容區域 -->
                 <div class="address-content-section">
                     <div id="addressContent" class="address-content"></div>
-                    <button class="address-copy-btn" id="copyContentBtn" title="複製內容">
-                        <span class="copy-icon">📋</span> 複製內容
+                    <button class="address-copy-btn" id="copyContentBtn" title="複製內容" aria-label="複製地址內容到剪貼簿">
+                        <span class="copy-icon" aria-hidden="true">📋</span> 複製內容
                     </button>
                 </div>
             </div>
@@ -318,20 +392,37 @@
                 <p class="footer-slogan">歡迎體驗極速預約快感</p>
                 <p class="footer-copyright">
                     &copy; 2025 
-                    <a href="https://lin.ee/tMPT8D8" target="_blank" class="footer-link">天空之城 官方隱身</a> 
+                    <a href="https://lin.ee/tMPT8D8" target="_blank" rel="noopener noreferrer" class="footer-link">天空之城 官方隱身</a> 
                     All rights reserved.
                 </p>
             </div>
         </div>
     </footer>
 
+    </main>
+
     <!-- 回到頂部按鈕 -->
-    <button class="scroll-to-top" id="scrollToTop">
-        <span>↑</span>
+    <button class="scroll-to-top" id="scrollToTop" aria-label="回到頂部">
+        <span aria-hidden="true">↑</span>
     </button>
 
-    <script src="config.js"></script>
-    <script src="script.js"></script>
+    <!-- Scripts with defer for better performance -->
+    <script src="config.js" defer></script>
+    <script src="script.js" defer></script>
+    
+    <!-- Error Handling -->
+    <script>
+        // 全局錯誤處理
+        window.addEventListener('error', function(e) {
+            console.error('Global error:', e.error);
+            // 可以在這裡發送錯誤報告到後端
+        });
+        
+        // Promise rejection 處理
+        window.addEventListener('unhandledrejection', function(e) {
+            console.error('Unhandled promise rejection:', e.reason);
+        });
+    </script>
 </body>
 </html>
 
