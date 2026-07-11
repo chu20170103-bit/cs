@@ -1,5 +1,5 @@
 // Service Worker for PWA Support
-const CACHE_NAME = 'sky-city-v1';
+const CACHE_NAME = 'sky-city-v2';
 // 使用相對路徑，適應不同部署環境
 const urlsToCache = [
   './',
@@ -42,7 +42,7 @@ self.addEventListener('activate', (event) => {
   return self.clients.claim();
 });
 
-// 攔截請求
+// 攔截請求：站內靜態資源採網路優先，避免舊版 JS/CSS 被快取卡住。
 self.addEventListener('fetch', (event) => {
   // 只處理 GET 請求
   if (event.request.method !== 'GET') {
@@ -54,42 +54,28 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
+  const requestUrl = new URL(event.request.url);
+
+  // Google Sheets、Google Drive 等第三方請求交給瀏覽器處理，絕不寫入本站快取。
+  if (requestUrl.origin !== self.location.origin) return;
+
   event.respondWith(
-    caches.match(event.request)
+    fetch(event.request)
       .then((response) => {
-        // 如果有快取，直接返回
-        if (response) {
-          return response;
+        if (!response || !response.ok || response.type !== 'basic') return response;
+
+        const isStaticAsset = /\.(?:css|js|html|json)$/i.test(requestUrl.pathname);
+        if (isStaticAsset) {
+          caches.open(CACHE_NAME).then((cache) => cache.put(event.request, response.clone()));
         }
 
-        // 否則從網路獲取
-        return fetch(event.request).then((response) => {
-          // 檢查響應是否有效
-          if (!response || response.status !== 200 || response.type !== 'basic') {
-            return response;
-          }
-
-          // 克隆響應（因為響應只能使用一次）
-          const responseToCache = response.clone();
-
-          // 快取靜態資源
-          if (event.request.url.includes('.css') || 
-              event.request.url.includes('.js') || 
-              event.request.url.includes('.html')) {
-            caches.open(CACHE_NAME)
-              .then((cache) => {
-                cache.put(event.request, responseToCache);
-              });
-          }
-
-          return response;
-        }).catch(() => {
-          // 網路失敗時，可以返回一個離線頁面
-          if (event.request.destination === 'document') {
-            return caches.match('./index.html');
-          }
-        });
+        return response;
+      })
+      .catch(async () => {
+        const cached = await caches.match(event.request);
+        if (cached) return cached;
+        if (event.request.destination === 'document') return caches.match('./index.html');
+        return Response.error();
       })
   );
 });
-
