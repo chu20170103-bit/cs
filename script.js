@@ -903,7 +903,7 @@ function renderGallery() {
                         <button class="toggle-btn" data-type="video">🎬 完整影片</button>
                     </div>
                 ` : ''}
-                <div class="girl-image ${videoUrl ? 'active' : ''}">
+                <div class="girl-image active">
                     <img 
                         src="${imageUrl}" 
                         alt="${girl.name}" 
@@ -986,6 +986,9 @@ function renderGallery() {
     
     // 重新初始化燈箱功能
     initLightbox();
+
+    // 卡片插入 DOM 後再綁定懶加載監聽，避免 DOMContentLoaded 時圖片尚未建立。
+    optimizeImageLoading();
 }
 
 // 開啟照片下載小窗口（Google Drive 不支援 iframe，所以用小窗口）
@@ -1798,9 +1801,6 @@ document.addEventListener('DOMContentLoaded', () => {
         
         // 初始化地址浮框功能
         initAddressModal();
-        
-        // 優化圖片載入
-        optimizeImageLoading();
         
         // 立即載入時刻表（優先顯示）
         const scheduleStart = performance.now();
