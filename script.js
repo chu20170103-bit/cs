@@ -24,17 +24,37 @@ const BLOCK_DURATION = 120000;         // 封鎖時長：2 分鐘
 
 // 使用 localStorage 持久化狀態（即使刷新頁面也能保留）
 function getRefreshCount() {
-    const data = localStorage.getItem('refreshData');
-    if (!data) return { count: 0, lastTime: 0, blockUntil: 0 };
-    return JSON.parse(data);
+    const initialState = { count: 0, lastTime: 0, blockUntil: 0 };
+
+    try {
+        const data = localStorage.getItem('refreshData');
+        if (!data) return initialState;
+
+        const parsed = JSON.parse(data);
+        if (!parsed || typeof parsed !== 'object') return initialState;
+
+        return {
+            count: Number(parsed.count) || 0,
+            lastTime: Number(parsed.lastTime) || 0,
+            blockUntil: Number(parsed.blockUntil) || 0
+        };
+    } catch (error) {
+        // 壞掉或被瀏覽器封鎖的 localStorage 不應中斷整個頁面。
+        console.warn('⚠️ 無法讀取刷新狀態，已改用預設值:', error);
+        return initialState;
+    }
 }
 
 function setRefreshCount(count, lastTime, blockUntil = 0) {
-    localStorage.setItem('refreshData', JSON.stringify({
-        count: count,
-        lastTime: lastTime,
-        blockUntil: blockUntil
-    }));
+    try {
+        localStorage.setItem('refreshData', JSON.stringify({
+            count: count,
+            lastTime: lastTime,
+            blockUntil: blockUntil
+        }));
+    } catch (error) {
+        console.warn('⚠️ 無法儲存刷新狀態:', error);
+    }
 }
 
 // 檢查是否被封鎖
@@ -838,6 +858,30 @@ function convertDriveVideoUrl(url) {
     return null;
 }
 
+// 影片只在使用者主動點擊時才建立 iframe，避免首頁同時載入大量 Google Drive 預覽。
+function loadVideoFrame(videoContainer, videoUrl, title) {
+    if (!videoContainer || videoContainer.dataset.loaded === 'true') return;
+
+    const iframe = document.createElement('iframe');
+    iframe.src = videoUrl;
+    iframe.title = `${title} 的影片`;
+    iframe.loading = 'lazy';
+    iframe.allow = 'autoplay; fullscreen; picture-in-picture';
+    iframe.allowFullscreen = true;
+    iframe.referrerPolicy = 'no-referrer';
+
+    videoContainer.replaceChildren(iframe);
+    videoContainer.dataset.loaded = 'true';
+}
+
+// 切回照片時移除 iframe，立刻停止 Drive 影片請求和播放資源。
+function unloadVideoFrame(videoContainer) {
+    if (!videoContainer) return;
+
+    videoContainer.replaceChildren();
+    delete videoContainer.dataset.loaded;
+}
+
 // 渲染圖片展示
 function renderGallery() {
     galleryContainer.innerHTML = '';
@@ -890,9 +934,7 @@ function renderGallery() {
                     >
                 </div>
                 ${videoUrl ? `
-                    <div class="girl-video">
-                        <iframe src="${videoUrl}" frameborder="0" allow="autoplay" allowfullscreen></iframe>
-                    </div>
+                    <div class="girl-video" aria-live="polite"></div>
                 ` : ''}
             </div>
             <div class="girl-content">
@@ -936,7 +978,7 @@ function renderGallery() {
         // 注意：照影下載按鈕已移除，改為 LINE預約 和 飛機預約 兩個按鈕
         
         // 添加照片/影片切換功能
-        if (girl.video) {
+        if (videoUrl) {
             const toggleBtns = galleryItem.querySelectorAll('.toggle-btn');
             const imageDiv = galleryItem.querySelector('.girl-image');
             const videoDiv = galleryItem.querySelector('.girl-video');
@@ -955,9 +997,11 @@ function renderGallery() {
                     if (type === 'photo') {
                         imageDiv.classList.add('active');
                         videoDiv.classList.remove('active');
+                        unloadVideoFrame(videoDiv);
                     } else {
                         imageDiv.classList.remove('active');
                         videoDiv.classList.add('active');
+                        loadVideoFrame(videoDiv, videoUrl, girl.name);
                     }
                 });
             });
@@ -1730,7 +1774,8 @@ function registerServiceWorker() {
     if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
             // 使用相對路徑，適應不同部署環境
-            const swPath = './service-worker.js';
+            // 變更版本參數可讓已安裝舊版快取的使用者立即抓到新版 Worker。
+            const swPath = './service-worker.js?v=2';
             navigator.serviceWorker.register(swPath)
                 .then(registration => {
                     console.log('✅ Service Worker 註冊成功:', registration.scope);
