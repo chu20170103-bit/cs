@@ -863,6 +863,9 @@ function convertDriveVideoUrl(url) {
     return null;
 }
 
+// 前 N 張卡片照片提高瀏覽器下載優先權；其餘仍立即載入，但不搶首屏頻寬。
+const GALLERY_PRIORITY_IMAGE_COUNT = 4;
+
 // 渲染圖片展示
 function renderGallery() {
     galleryContainer.innerHTML = '';
@@ -894,6 +897,7 @@ function renderGallery() {
             return `💲${minutes}🕸${shots}S $${finalPrice}`;
         });
         const infoText = infoTextPlus4.replace(/\n/g, '<br>');
+        const fetchPriorityAttr = index < GALLERY_PRIORITY_IMAGE_COUNT ? ' fetchpriority="high"' : '';
         
         galleryItem.innerHTML = `
             <div class="girl-media">
@@ -906,8 +910,8 @@ function renderGallery() {
                 <div class="girl-image active">
                     <img 
                         src="${imageUrl}" 
-                        alt="${girl.name}" 
-                        loading="lazy" 
+                        alt="${girl.name}"${fetchPriorityAttr}
+                        loading="eager" 
                         decoding="async"
                         width="400"
                         height="600"
@@ -1700,52 +1704,35 @@ function initWebVitals() {
 
 // ========== 圖片載入優化 ==========
 function optimizeImageLoading() {
-    // 使用 Intersection Observer 實現真正的懶加載
-    if ('IntersectionObserver' in window) {
-        const imageObserver = new IntersectionObserver((entries, observer) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    const img = entry.target;
-                    
-                    // 處理 data-src 的圖片
-                    if (img.dataset.src) {
-                        img.src = img.dataset.src;
-                        img.removeAttribute('data-src');
-                        observer.unobserve(img);
-                    }
-                    
-                    // 標記圖片已載入（用於 CSS 動畫）
-                    img.addEventListener('load', () => {
-                        img.setAttribute('data-loaded', 'true');
-                    }, { once: true });
-                    
-                    // 處理載入失敗
-                    img.addEventListener('error', () => {
-                        console.warn('圖片載入失敗:', img.src);
-                        img.setAttribute('data-loaded', 'true'); // 仍然標記為已處理
-                    }, { once: true });
-                }
-            });
-        }, {
-            rootMargin: '50px' // 提前50px開始載入
+    // Gallery 照片在 renderGallery 後立即開始載入，僅追蹤載入完成狀態。
+    document.querySelectorAll('#galleryContainer .girl-image img').forEach((img) => {
+        const markLoaded = () => img.setAttribute('data-loaded', 'true');
+        if (img.complete) markLoaded();
+        else {
+            img.addEventListener('load', markLoaded, { once: true });
+            img.addEventListener('error', markLoaded, { once: true });
+        }
+    });
+
+    // 保留 data-src 延遲載入，供日後擴充其他區塊圖片使用。
+    if (!('IntersectionObserver' in window)) return;
+
+    const deferredImages = document.querySelectorAll('img[data-src]');
+    if (!deferredImages.length) return;
+
+    const imageObserver = new IntersectionObserver((entries, observer) => {
+        entries.forEach(entry => {
+            if (!entry.isIntersecting) return;
+            const img = entry.target;
+            if (img.dataset.src) {
+                img.src = img.dataset.src;
+                img.removeAttribute('data-src');
+                observer.unobserve(img);
+            }
         });
-        
-        // 觀察所有帶 data-src 的圖片
-        document.querySelectorAll('img[data-src]').forEach(img => {
-            imageObserver.observe(img);
-        });
-        
-        // 觀察所有 lazy loading 的圖片
-        document.querySelectorAll('img[loading="lazy"]').forEach(img => {
-            img.addEventListener('load', () => {
-                img.setAttribute('data-loaded', 'true');
-            }, { once: true });
-            
-            img.addEventListener('error', () => {
-                img.setAttribute('data-loaded', 'true');
-            }, { once: true });
-        });
-    }
+    }, { rootMargin: '50px' });
+
+    deferredImages.forEach(img => imageObserver.observe(img));
 }
 
 // ========== Service Worker 註冊 ==========
