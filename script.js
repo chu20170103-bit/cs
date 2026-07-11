@@ -863,31 +863,6 @@ function convertDriveVideoUrl(url) {
     return null;
 }
 
-// 影片只在使用者主動點擊時才建立播放器，避免首頁同時載入大量雲端影片。
-function loadVideoFrame(videoContainer, videoUrl, title) {
-    if (!videoContainer || videoContainer.dataset.loaded === 'true') return;
-
-    const iframe = document.createElement('iframe');
-    const autoplayUrl = `${videoUrl}${videoUrl.includes('?') ? '&' : '?'}autoplay=1`;
-    iframe.src = autoplayUrl;
-    iframe.title = `${title} 的影片`;
-    iframe.loading = 'lazy';
-    iframe.allow = 'autoplay; fullscreen; picture-in-picture';
-    iframe.allowFullscreen = true;
-    iframe.referrerPolicy = 'no-referrer';
-
-    videoContainer.replaceChildren(iframe);
-    videoContainer.dataset.loaded = 'true';
-}
-
-// 切回照片時移除 iframe，立刻停止 Drive 影片請求和播放資源。
-function unloadVideoFrame(videoContainer) {
-    if (!videoContainer) return;
-
-    videoContainer.replaceChildren();
-    delete videoContainer.dataset.loaded;
-}
-
 // 渲染圖片展示
 function renderGallery() {
     galleryContainer.innerHTML = '';
@@ -925,7 +900,7 @@ function renderGallery() {
                 ${videoUrl ? `
                     <div class="media-toggle">
                         <button class="toggle-btn active" data-type="photo">📷 照片</button>
-                        <button class="toggle-btn" data-type="video">🎬 影片</button>
+                        <button class="toggle-btn" data-type="video">🎬 完整影片</button>
                     </div>
                 ` : ''}
                 <div class="girl-image ${videoUrl ? 'active' : ''}">
@@ -940,7 +915,6 @@ function renderGallery() {
                     >
                 </div>
                 ${videoUrl ? `
-                    <div class="girl-video" aria-live="polite"></div>
                     <a class="video-full-btn" href="${videoUrl}" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation();" aria-label="${girl.name} 的影片完整播放">↗ 完整播放</a>
                 ` : ''}
             </div>
@@ -988,7 +962,6 @@ function renderGallery() {
         if (videoUrl) {
             const toggleBtns = galleryItem.querySelectorAll('.toggle-btn');
             const imageDiv = galleryItem.querySelector('.girl-image');
-            const videoDiv = galleryItem.querySelector('.girl-video');
             
             toggleBtns.forEach(btn => {
                 btn.addEventListener('click', (e) => {
@@ -996,20 +969,16 @@ function renderGallery() {
                     
                     const type = btn.dataset.type;
                     
-                    // 切換按鈕狀態
+                    if (type === 'video') {
+                        // 直接開啟完整的 Drive 播放頁，不在卡片內嵌入跨網域播放器，
+                        // 避免 Drive 原生的大型播放遮罩擋住影片畫面。
+                        window.open(videoUrl, '_blank', 'noopener,noreferrer');
+                        return;
+                    }
+
                     toggleBtns.forEach(b => b.classList.remove('active'));
                     btn.classList.add('active');
-                    
-                    // 切換顯示內容
-                    if (type === 'photo') {
-                        imageDiv.classList.add('active');
-                        videoDiv.classList.remove('active');
-                        unloadVideoFrame(videoDiv);
-                    } else {
-                        imageDiv.classList.remove('active');
-                        videoDiv.classList.add('active');
-                        loadVideoFrame(videoDiv, videoUrl, girl.name);
-                    }
+                    imageDiv.classList.add('active');
                 });
             });
         }
