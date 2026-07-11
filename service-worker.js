@@ -1,12 +1,12 @@
 // Service Worker for PWA Support
-const CACHE_NAME = 'sky-city-v2';
+const CACHE_NAME = 'sky-city-v3';
 // 使用相對路徑，適應不同部署環境
 const urlsToCache = [
   './',
   './index.html',
-  './style.css',
-  './script.js',
-  './config.js',
+  './style.css?v=3',
+  './script.js?v=3',
+  './config.js?v=3',
   './manifest.json'
 ];
 
@@ -60,7 +60,8 @@ self.addEventListener('fetch', (event) => {
   if (requestUrl.origin !== self.location.origin) return;
 
   event.respondWith(
-    fetch(event.request)
+    // 略過瀏覽器 HTTP 快取，讓版本化靜態檔案在下一次重新整理立即更新。
+    fetch(event.request, { cache: 'no-store' })
       .then((response) => {
         if (!response || !response.ok || response.type !== 'basic') return response;
 
