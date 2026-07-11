@@ -1727,31 +1727,7 @@ table, pre, code {
     transform: scale(1.05);
 }
 
-.girl-video {
-    width: 100%;
-    /* 雲端影片多為直式；維持完整 9:16 畫面，不再被 280px 固定高度截斷。 */
-    aspect-ratio: 9 / 16;
-    min-height: 360px;
-    display: none;
-    background: #000;
-    position: relative;
-    overflow: hidden;
-}
-
-.girl-video.active {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.girl-video iframe {
-    width: 100%;
-    height: 100%;
-    border: none;
-    display: block;
-}
-
-/* 需要完整尺寸或播放器控制時，直接開啟 Google Drive 預覽頁。 */
+/* 影片在完整的 Google Drive 預覽頁播放，網站卡片內不嵌入播放器。 */
 .video-full-btn {
     position: absolute;
     left: 10px;
