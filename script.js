@@ -818,8 +818,8 @@ function convertDriveImageUrl(url) {
     return url;
 }
 
-// 轉換 Google Drive 影片連結為嵌入格式
-function convertDriveVideoUrl(url) {
+// 從常見 Google Drive 連結格式中擷取影片 ID。
+function getDriveFileId(url) {
     if (!url) return null;
     
     // 從各種 Google Drive 連結格式中提取 file ID
@@ -843,10 +843,15 @@ function convertDriveVideoUrl(url) {
         fileId = match3[1];
     }
     
-    // 如果找到 fileId，返回 preview 格式
-    if (fileId) {
-        return `https://drive.google.com/file/d/${fileId}/preview`;
-    }
+    return fileId;
+}
+
+// 轉換 Google Drive 影片連結為完整預覽頁，用於「完整播放」。
+function convertDriveVideoUrl(url) {
+    if (!url) return null;
+
+    const fileId = getDriveFileId(url);
+    if (fileId) return `https://drive.google.com/file/d/${fileId}/preview`;
     
     // 如果已經是 preview 格式，直接返回
     if (url.includes('/preview')) {
@@ -858,12 +863,13 @@ function convertDriveVideoUrl(url) {
     return null;
 }
 
-// 影片只在使用者主動點擊時才建立 iframe，避免首頁同時載入大量 Google Drive 預覽。
+// 影片只在使用者主動點擊時才建立播放器，避免首頁同時載入大量雲端影片。
 function loadVideoFrame(videoContainer, videoUrl, title) {
     if (!videoContainer || videoContainer.dataset.loaded === 'true') return;
 
     const iframe = document.createElement('iframe');
-    iframe.src = videoUrl;
+    const autoplayUrl = `${videoUrl}${videoUrl.includes('?') ? '&' : '?'}autoplay=1`;
+    iframe.src = autoplayUrl;
     iframe.title = `${title} 的影片`;
     iframe.loading = 'lazy';
     iframe.allow = 'autoplay; fullscreen; picture-in-picture';
