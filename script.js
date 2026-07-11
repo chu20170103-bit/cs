@@ -1782,7 +1782,7 @@ function registerServiceWorker() {
         window.addEventListener('load', () => {
             // 使用相對路徑，適應不同部署環境
             // 變更版本參數可讓已安裝舊版快取的使用者立即抓到新版 Worker。
-            const swPath = './service-worker.js?v=2';
+            const swPath = './service-worker.js?v=3';
             navigator.serviceWorker.register(swPath)
                 .then(registration => {
                     console.log('✅ Service Worker 註冊成功:', registration.scope);
