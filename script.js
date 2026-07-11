@@ -935,6 +935,7 @@ function renderGallery() {
                 </div>
                 ${videoUrl ? `
                     <div class="girl-video" aria-live="polite"></div>
+                    <a class="video-full-btn" href="${videoUrl}" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation();" aria-label="${girl.name} 的影片完整播放">↗ 完整播放</a>
                 ` : ''}
             </div>
             <div class="girl-content">
