@@ -2,6 +2,9 @@
 const SHEET_CONFIG = {
     // 使用發布的 CSV 網址（無 CORS 問題！）
     CSV_URL: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTMDU3Nhfv_fJbu9YXQVpDjkVGpGOGqBY9QDZPFduF7qKtgS7ywg-DAkpZSO3EUGVRucGMkW1Z2kSnq/pub?gid=419986915&single=true&output=csv',
+
+    // 天空之城專用班表：Apps Script 只公開潘朵拉資料庫 J6
+    SCHEDULE_URL: 'https://script.google.com/macros/s/AKfycbzs5UE-tlaD9dBGpQhvFX5AGMYjVuSMUa_jA5i-NkoyoUz-mwfmln5zWGgdPC6wEMbL/exec',
     
     // 欄位對應（潘朵拉網頁專用工作表）
     COLUMNS: {

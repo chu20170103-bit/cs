@@ -3,6 +3,7 @@ let girlsData = [];
 const galleryContainer = document.getElementById('galleryContainer');
 const scheduleTextTaoyuan = document.getElementById('scheduleTextTaoyuan');
 const scheduleTextZhongli = document.getElementById('scheduleTextZhongli');
+const scheduleTextXimen = document.getElementById('scheduleTextXimen');
 const updateTimeSpan = document.getElementById('updateTime');
 const activityContent = document.getElementById('activityContent');
 const rulesContent = document.getElementById('rulesContent');
@@ -76,7 +77,7 @@ let isFirstLoad = true;  // 是否首次載入（首次載入不受限制）
 function formatScheduleText(text) {
     if (!text) return '暫無時刻表資料';
     
-    let formatted = text;
+    let formatted = text.replace(/【西門區】/g, '【西門町區】');
     
     // 移除不需要顯示的內容（客戶版）
     formatted = formatted
@@ -109,13 +110,13 @@ function formatScheduleText(text) {
     // 替換特殊符號和關鍵字為 HTML 標籤
     formatted = formatted
         // 先處理地址&停車場官方輸入【A】或【B】 → 改為彈出浮框
-        .replace(/🚘地址&停車場輸入【([AB])】/g, (match, letter) => {
+        .replace(/🚘地址&停車場輸入【([ABC])】/g, (match, letter) => {
             return `🚘<a href="javascript:void(0);" class="sch-link address-trigger" data-letter="${letter}">地址&停車場官方輸入<span class="sch-title-link">【${letter}】</span></a><br><br>`;
         })
         // 【桃園區】【中壢區】等區域標題
-        .replace(/【(桃園區|中壢區)】/g, '<span class="sch-title">【$1】</span>')
+        .replace(/【(桃園區|中壢區|西門町區)】/g, '<span class="sch-title">【$1】</span>')
         // 妹妹編號 B01, A01 等（不帶【】）
-        .replace(/\b([AB]\d+)\b/g, '<span class="sch-code">$1</span>')
+        .replace(/\b([ABC]\d+)\b/g, '<span class="sch-code">$1</span>')
         // 🌸 符號高亮（新妹妹）
         .replace(/🌸/g, '<span class="sch-new">🌸</span>')
         // 🚘 符號高亮（如果還有單獨的）
@@ -383,39 +384,81 @@ function formatRulesText(text) {
     return formatted;
 }
 
-// 分割桃園和中壢的時刻表
+// 分割三個站點的時刻表，確保每個前台只顯示自己的區域
 function splitSchedule(text) {
-    console.log('原始時刻表資料（前200字）:', text.substring(0, 200));
-    
-    // 找出【桃園區】的位置
-    const taoyuanIndex = text.indexOf('【桃園區】');
-    const zhongliIndex = text.indexOf('【中壢區】');
-    
-    let taoyuan = '';
-    let zhongli = '';
-    
-    if (taoyuanIndex !== -1 && zhongliIndex !== -1) {
-        // 兩個都找到
-        taoyuan = text.substring(taoyuanIndex, zhongliIndex).trim();
-        zhongli = text.substring(zhongliIndex).trim();
-    } else if (taoyuanIndex !== -1) {
-        // 只有桃園區
-        taoyuan = text.substring(taoyuanIndex).trim();
-    } else if (zhongliIndex !== -1) {
-        // 只有中壢區
-        zhongli = text.substring(zhongliIndex).trim();
-    }
-    
-    console.log('桃園區資料（前100字）:', taoyuan.substring(0, 100));
-    console.log('中壢區資料（前100字）:', zhongli.substring(0, 100));
-    
+    const normalized = String(text || '').replace(/【西門區】/g, '【西門町區】');
+    const markers = [
+        ['taoyuan', '【桃園區】'],
+        ['zhongli', '【中壢區】'],
+        ['ximen', '【西門町區】']
+    ];
+    const positions = markers
+        .map(([key, marker]) => ({ key, marker, index: normalized.indexOf(marker) }))
+        .filter(item => item.index !== -1)
+        .sort((a, b) => a.index - b.index);
+    const sections = { taoyuan: '', zhongli: '', ximen: '' };
+
+    positions.forEach((item, index) => {
+        const end = positions[index + 1] ? positions[index + 1].index : normalized.length;
+        sections[item.key] = normalized.substring(item.index, end).trim();
+    });
+
+    console.log('時刻表區域資料:', Object.fromEntries(
+        Object.entries(sections).map(([key, value]) => [key, value.substring(0, 100)])
+    ));
+
     return {
-        taoyuan: taoyuan || '暫無桃園區資料',
-        zhongli: zhongli || '暫無中壢區資料'
+        taoyuan: sections.taoyuan || '暫無桃園區資料',
+        zhongli: sections.zhongli || '暫無中壢區資料',
+        ximen: sections.ximen || '暫無西門町區資料'
     };
 }
 
-// 載入最新時刻表（E1 欄位）
+// 以 JSONP 讀取 Apps Script 的 J6，避免 GitHub Pages 的跨來源限制
+function loadSkySchedule() {
+    return new Promise((resolve, reject) => {
+        const baseUrl = SHEET_CONFIG.SCHEDULE_URL;
+        if (!baseUrl || baseUrl.includes('REPLACE_WITH')) {
+            reject(new Error('天空之城 J6 班表端點尚未設定'));
+            return;
+        }
+
+        const callbackName = `skyScheduleCallback_${Date.now()}`;
+        const script = document.createElement('script');
+        const url = new URL(baseUrl, window.location.href);
+        url.searchParams.set('cell', 'J6');
+        url.searchParams.set('callback', callbackName);
+        url.searchParams.set('_', Date.now().toString());
+
+        const cleanup = () => {
+            delete window[callbackName];
+            script.remove();
+        };
+        const timeout = window.setTimeout(() => {
+            cleanup();
+            reject(new Error('天空之城 J6 班表端點逾時'));
+        }, 15000);
+
+        window[callbackName] = payload => {
+            window.clearTimeout(timeout);
+            cleanup();
+            if (!payload || payload.ok !== true) {
+                reject(new Error(payload && payload.error ? payload.error : '天空之城 J6 班表端點回傳錯誤'));
+                return;
+            }
+            resolve(payload);
+        };
+        script.onerror = () => {
+            window.clearTimeout(timeout);
+            cleanup();
+            reject(new Error('無法連線到天空之城 J6 班表端點'));
+        };
+        script.src = url.toString();
+        document.head.appendChild(script);
+    });
+}
+
+// 載入最新時刻表（天空之城固定讀 J6）
 async function loadSchedule() {
     const now = Date.now();
     
@@ -429,6 +472,9 @@ async function loadSchedule() {
         }
         if (scheduleTextZhongli) {
             scheduleTextZhongli.innerHTML = `<p style="color: #ef4444;">🚫 訪問已被限制</p><p style="font-size: 0.85rem;">${remainingSeconds} 秒後解除</p>`;
+        }
+        if (scheduleTextXimen) {
+            scheduleTextXimen.innerHTML = `<p style="color: #ef4444;">🚫 訪問已被限制</p><p style="font-size: 0.85rem;">${remainingSeconds} 秒後解除</p>`;
         }
         return;
     }
@@ -452,6 +498,9 @@ async function loadSchedule() {
         if (scheduleTextZhongli) {
             scheduleTextZhongli.innerHTML = '<p>⏳ 請稍候 ' + remainingTime + ' 秒...</p>';
         }
+        if (scheduleTextXimen) {
+            scheduleTextXimen.innerHTML = '<p>⏳ 請稍候 ' + remainingTime + ' 秒...</p>';
+        }
         
         // 第 5 次警告時顯示友善提示
         if (newCount === 5) {
@@ -470,6 +519,9 @@ async function loadSchedule() {
             }
             if (scheduleTextZhongli) {
                 scheduleTextZhongli.innerHTML = '<p style="color: #ef4444;">🚫 訪問已被限制</p><p style="font-size: 0.85rem;">2 分鐘後自動解除</p>';
+            }
+            if (scheduleTextXimen) {
+                scheduleTextXimen.innerHTML = '<p style="color: #ef4444;">🚫 訪問已被限制</p><p style="font-size: 0.85rem;">2 分鐘後自動解除</p>';
             }
             
             // 彈窗警告
@@ -490,34 +542,21 @@ async function loadSchedule() {
         setRefreshCount(0, now, 0);
         isFirstLoad = false; // 標記首次載入完成
         
+        const schedulePayload = await loadSkySchedule();
+        const { taoyuan, zhongli, ximen } = splitSchedule(schedulePayload.text || '');
+        window.currentScheduleData = { taoyuan, zhongli, ximen };
+        if (scheduleTextTaoyuan) scheduleTextTaoyuan.innerHTML = formatScheduleText(taoyuan);
+        if (scheduleTextZhongli) scheduleTextZhongli.innerHTML = formatScheduleText(zhongli);
+        if (scheduleTextXimen) scheduleTextXimen.innerHTML = formatScheduleText(ximen);
+
         const response = await fetch(SHEET_CONFIG.CSV_URL);
         const csvText = await response.text();
         const rows = parseCSV(csvText);
-        
-        // 讀取 E1（第1行第5欄，索引[0][4]）
-        if (rows && rows.length > 0 && rows[0].length > 4) {
-            const scheduleData = rows[0][4] || '暫無時刻表資料';
-            
-            // 分割桃園和中壢
-            const { taoyuan, zhongli } = splitSchedule(scheduleData);
-            
-            // 儲存原始資料到全域變數，供後續更新使用
-            window.currentScheduleData = { taoyuan, zhongli };
-            
-            // 格式化並顯示
-            scheduleTextTaoyuan.innerHTML = formatScheduleText(taoyuan);
-            scheduleTextZhongli.innerHTML = formatScheduleText(zhongli);
-            
-            // 更新時間
-            const now = new Date();
-            const timeStr = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`;
-            updateTimeSpan.textContent = `最後更新：${timeStr}`;
-            
-            console.log('✅ 時刻表更新成功:', timeStr);
-        } else {
-            scheduleTextTaoyuan.innerHTML = '<p>⚠️ 無法載入資料</p>';
-            scheduleTextZhongli.innerHTML = '<p>⚠️ 無法載入資料</p>';
-        }
+
+        const currentDate = new Date();
+        const timeStr = `${currentDate.getHours().toString().padStart(2, '0')}:${currentDate.getMinutes().toString().padStart(2, '0')}`;
+        if (updateTimeSpan) updateTimeSpan.textContent = `最後更新：${timeStr}`;
+        console.log('✅ 天空之城 J6 時刻表更新成功:', timeStr);
         
         // 讀取 F1（第1行第6欄，索引[0][5]）- 熱門活動資訊
         if (rows && rows.length > 0 && rows[0].length > 5 && activityContent) {
@@ -576,6 +615,9 @@ async function loadSchedule() {
         if (scheduleTextZhongli) {
             scheduleTextZhongli.innerHTML = '<p style="color: #f59e0b;">⚠️ 載入失敗</p><p style="font-size: 0.85rem;">請稍後重試</p>';
         }
+        if (scheduleTextXimen) {
+            scheduleTextXimen.innerHTML = '<p style="color: #f59e0b;">⚠️ 載入失敗</p><p style="font-size: 0.85rem;">請稍後重試</p>';
+        }
         throw error; // 重新拋出錯誤以便調用者處理
     }
 }
@@ -589,11 +631,12 @@ function updateScheduleGirlNames() {
     
     // 取得當前時刻表的純文字內容（儲存在全域變數中）
     if (window.currentScheduleData) {
-        const { taoyuan, zhongli } = window.currentScheduleData;
+        const { taoyuan, zhongli, ximen } = window.currentScheduleData;
         
         // 重新格式化（這次 girlsData 已經有資料了）
         scheduleTextTaoyuan.innerHTML = formatScheduleText(taoyuan);
         scheduleTextZhongli.innerHTML = formatScheduleText(zhongli);
+        if (scheduleTextXimen) scheduleTextXimen.innerHTML = formatScheduleText(ximen);
         
         console.log('✅ 時刻表名稱鏈接已更新');
     }
