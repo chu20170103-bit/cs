@@ -1,12 +1,12 @@
 // Service Worker for PWA Support
-const CACHE_NAME = 'sky-city-v4';
+const CACHE_NAME = 'sky-city-v5';
 // 使用相對路徑，適應不同部署環境
 const urlsToCache = [
   './',
   './index.html',
-  './style.css?v=4',
-  './script.js?v=4',
-  './config.js?v=4',
+  './style.css?v=5',
+  './script.js?v=5',
+  './config.js?v=5',
   './manifest.json'
 ];
 

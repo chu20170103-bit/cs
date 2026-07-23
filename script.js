@@ -73,11 +73,24 @@ function isCurrentlyBlocked() {
 
 let isFirstLoad = true;  // 是否首次載入（首次載入不受限制）
 
+// 天空之城前台不顯示潘朵拉站的宣傳文字與連結，無論它來自班表、活動或規範欄位。
+function removeSkyExcludedLines(text) {
+    if (!text) return '';
+
+    const excluded = /生客請提供約過別家紀錄|網站照片可下載|潘朵拉一線|pandora-customer-v2\.pages\.dev|padolady\.pages\.dev|https?:\/\/line\.me\/ti\/p\/uIhuzkY/i;
+    return String(text)
+        .split(/\r?\n/)
+        .filter(line => !excluded.test(line))
+        .join('\n')
+        .replace(/\n{3,}/g, '\n\n')
+        .trim();
+}
+
 // 格式化時刻表文字
 function formatScheduleText(text) {
     if (!text) return '暫無時刻表資料';
-    
-    let formatted = text.replace(/【西門區】/g, '【西門町區】');
+
+    let formatted = removeSkyExcludedLines(text).replace(/【西門區】/g, '【西門町區】');
     
     // 移除不需要顯示的內容（客戶版）
     formatted = formatted
@@ -183,8 +196,8 @@ function formatScheduleText(text) {
 // 格式化活動資訊文字
 function formatActivityText(text) {
     if (!text) return '<p style="color: rgba(255, 255, 255, 0.6);">暫無活動資訊</p>';
-    
-    let formatted = text;
+
+    let formatted = removeSkyExcludedLines(text);
     
     // 移除特定的活動資訊內容（客戶版不顯示）
     // 先按行分割，逐行過濾
@@ -283,7 +296,7 @@ function formatRulesText(text) {
     
     console.log('🔧 格式化前原始文字（前100字）:', text.substring(0, 100));
     
-    let formatted = text;
+    let formatted = removeSkyExcludedLines(text);
     
     // 移除特定的注意事項內容（客戶版不顯示）
     formatted = formatted
